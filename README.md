@@ -1,6 +1,6 @@
 v1.0.0
 
-# ![icon](https://cdn2.iconfinder.com/data/icons/buno-investmetn-savings/32/aim_target_earnings_money-32.png) Myself Professional 
+# ![icon](/images/money.png) Myself Professional 
 
 asdasdasd
 
