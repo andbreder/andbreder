@@ -137,7 +137,7 @@ export PS1='\
 #region GIT ALIAS
 
 function git_alias() {
-  echo -e "$PUR_UND$ $1$T_RESET"; $1
+  echo -e "$PUR_CLR$ $1$T_RESET"; $@
 }
 
 alias         gadd='git_alias "git add"'         # add
@@ -145,6 +145,8 @@ alias      gbranch='git_alias "git branch"'      # branch
 alias           gb='git_alias "git branch"'      # 
 alias       gclone='git_alias "git clone"'       # clone
 alias           gc='git_alias "git clone"'       # 
+alias      gcommit='git_alias "git commit"'      # commit
+alias          gcm='git_alias "git commit"'      # 
 alias    gcheckout='git_alias "git checkout"'    # checkout
 alias         gchk='git_alias "git checkout"'    # 
 alias gcherry-pick='git_alias "git cherry-pick"' # cherry-pick
@@ -174,6 +176,11 @@ alias      gswitch='git_alias "git switch"'      # switch
 alias         gswt='git_alias "git switch"'      # 
 alias         gtag='git_alias "git tag"'         # tag
 
+function gurl() {
+  echo -e "$PUR_CLR$ git config --get remote.origin.url$T_RESET"
+  GIT_URL=$(git config --get remote.origin.url)
+  echo -e "\n\t${GIT_URL%.git}\n"
+}
 #endregion
 
 # "settings.json" > desabilitar historico
