@@ -125,6 +125,7 @@ function get_curr_folder() {
 # \s        | nome do shell atual           :  
 
 export PS1='\
+\n\
 \[\033]0;$TITLEPREFIX:$PWD\007\]\
 '$BLK_CLR'${LOCAL_IPV4} \
 '$BLU_CLR'\u \
@@ -135,11 +136,6 @@ export PS1='\
 #endregion
 
 #region GIT ALIAS
-
-function git_alias() {
-  echo -e "$PUR_CLR$ $1$T_RESET"; $@
-}
-
 alias         gadd='git_alias "git add"'         # add
 alias      gbranch='git_alias "git branch"'      # branch
 alias           gb='git_alias "git branch"'      # 
@@ -176,12 +172,49 @@ alias      gswitch='git_alias "git switch"'      # switch
 alias         gswt='git_alias "git switch"'      # 
 alias         gtag='git_alias "git tag"'         # tag
 
+function git_alias() {
+  echo -e "$PUR_CLR\$ $1$T_RESET"
+  "$@"
+}
+
 function gurl() {
   echo -e "$PUR_CLR$ git config --get remote.origin.url$T_RESET"
   GIT_URL=$(git config --get remote.origin.url)
-  echo -e "\n\t${GIT_URL%.git}\n"
+  echo -e "\n\t${GIT_URL%.git}"
 }
+
 #endregion
+
+function profile() {
+  if [ "$#" -eq 0 ]; then
+    profile --help
+  else
+    case "$1" in
+      -c|--code)
+        echo -e "$PUR_CLR$ profile --code$T_RESET ~/.profile"
+        code ~/.profile
+        ;;
+      -s|--save)
+        if [ ! "$#" -eq 2 ]; then
+          profile --help
+          return
+        fi
+        output="$2"
+        if [ -d "$2" ]; then
+          output="$2/.profile"
+        fi
+        echo -e "$PUR_CLR$ profile --save$T_RESET ~/.profile $output"
+        cp ~/.profile "$output"
+        ;;
+      -h|--help|*)
+        echo -e "profile usage:\n"
+        echo -e "  ${BLU_CLR}--code${T_RESET} | -c          opens the current .profile file for editing"
+        echo -e "  ${BLU_CLR}--help${T_RESET} | -h          displays command execution options"
+        echo -e "  ${BLU_CLR}--save${T_RESET} | -s <path>   updates the .profile file in the ~/ directory"
+        ;;
+    esac
+  fi
+}
 
 # "settings.json" > desabilitar historico
 # ... "terminal.integrated.persistentSessionReviveProcess": "never",
