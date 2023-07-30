@@ -136,47 +136,52 @@ export PS1='\
 #endregion
 
 #region GIT ALIAS
-alias         gadd='git_alias "git add"'         # add
-alias      gbranch='git_alias "git branch"'      # branch
-alias           gb='git_alias "git branch"'      # 
-alias       gclone='git_alias "git clone"'       # clone
-alias           gc='git_alias "git clone"'       # 
-alias      gcommit='git_alias "git commit"'      # commit
-alias          gcm='git_alias "git commit"'      # 
-alias    gcheckout='git_alias "git checkout"'    # checkout
-alias         gchk='git_alias "git checkout"'    # 
-alias gcherry-pick='git_alias "git cherry-pick"' # cherry-pick
-alias      gcherry='git_alias "git cherry-pick"' # 
-alias        gchpk='git_alias "git cherry-pick"' # 
-alias        gdiff='git_alias "git diff"'        # diff
-alias          gdf='git_alias "git diff"'        # 
-alias       gfetch='git_alias "git fetch"'       # fetch
-alias          gft='git_alias "git fetch"'       # 
-alias         glog='git_alias "git log"'         # log
-alias       gmerge='git_alias "git merge"'       # merge
-alias          gmr='git_alias "git merge"'       # 
-alias          gmv='git_alias "git mv"'          # mv
-alias        gpush='git_alias "git push"'        # push
-alias        gpull='git_alias "git pull"'        # pull
-alias          grm='git_alias "git rm"'          # rm
-alias      grebase='git_alias "git rebase"'      # rebase
-alias          grb='git_alias "git rebase"'      # 
-alias      grevert='git_alias "git revert"'      # revert
-alias         grvt='git_alias "git revert"'      # 
-alias    gshortlog='git_alias "git shortlog"'    # shortlog
-alias        gslog='git_alias "git shortlog"'    #
-alias      gstatus='git_alias "git status"'      # status
-alias          gst='git_alias "git status"'      # 
-alias       gstash='git_alias "git stash"'       # stash
-alias      gswitch='git_alias "git switch"'      # switch
-alias         gswt='git_alias "git switch"'      # 
-alias         gtag='git_alias "git tag"'         # tag
+alias         gadd='git_alias "add"'         # add
+alias      gbranch='git_alias "branch"'      # branch
+alias           gb='git_alias "branch"'      # 
+alias       gclone='git_alias "clone"'       # clone
+alias           gc='git_alias "clone"'       # 
+alias      gcommit='git_alias "commit"'      # commit
+alias          gcm='git_alias "commit"'      # 
+alias    gcheckout='git_alias "checkout"'    # checkout
+alias         gchk='git_alias "checkout"'    # 
+alias gcherry-pick='git_alias "cherry-pick"' # cherry-pick
+alias      gcherry='git_alias "cherry-pick"' # 
+alias        gchpk='git_alias "cherry-pick"' # 
+alias        gdiff='git_alias "diff"'        # diff
+alias          gdf='git_alias "diff"'        # 
+alias       gfetch='git_alias "fetch"'       # fetch
+alias          gft='git_alias "fetch"'       # 
+alias         glog='git_alias "log"'         # log
+alias       gmerge='git_alias "merge"'       # merge
+alias          gmr='git_alias "merge"'       # 
+alias          gmv='git_alias "mv"'          # mv
+alias        gpush='git_alias "push"'        # push
+alias        gpull='git_alias "pull"'        # pull
+alias          grm='git_alias "rm"'          # rm
+alias      grebase='git_alias "rebase"'      # rebase
+alias          grb='git_alias "rebase"'      # 
+alias      grevert='git_alias "revert"'      # revert
+alias         grvt='git_alias "revert"'      # 
+alias    gshortlog='git_alias "shortlog"'    # shortlog
+alias        gslog='git_alias "shortlog"'    #
+alias      gstatus='git_alias "status"'      # status
+alias          gst='git_alias "status"'      # 
+alias       gstash='git_alias "stash"'       # stash
+alias      gswitch='git_alias "switch"'      # switch
+alias         gswt='git_alias "switch"'      # 
+alias         gtag='git_alias "tag"'         # tag
 
 function git_alias() {
-  echo -e "$PUR_CLR\$ $1$T_RESET"
-  "$@"
+  echo -e "$PUR_CLR\$ git $1$T_RESET"
+  git "$@"
 }
 
+function gfast() {
+  gadd .
+  gcommit -m "$1"
+  gpush
+}
 function gurl() {
   echo -e "$PUR_CLR$ git config --get remote.origin.url$T_RESET"
   GIT_URL=$(git config --get remote.origin.url)
