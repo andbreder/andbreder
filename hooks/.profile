@@ -225,10 +225,10 @@ UUIDGEN_PATH=$(find "$HARD_DISK_LETTER:\\Program Files (x86)\\Windows Kits\\$WIN
 
 function guid() {
   if [ -e "$UUIDGEN_PATH" ]; then
-    echo -e "${RED_CLR}not found!$T_RESET \"$UUIDGEN_PATH\""
-    echo -e "${PUR_CLR}uuidgen$T_RESET $("$UUIDGEN_PATH")"
+    echo -e "${PUR_UND}uuidgen$T_RESET $("$UUIDGEN_PATH")"
   else
-    echo -e "${RED_CLR}not found!$T_RESET \"$UUIDGEN_PATH\""
+    # <!> "printf" porque vai acontecer um "10\bin" e isso (0\b) quebra o terminal usando "echo -e ..."
+    printf "${RED_CLR}not found!$T_RESET %s\n" "${UUIDGEN_PATH@Q}"
   fi
 }
 
@@ -293,3 +293,4 @@ if [ -f "$CCD_FILE_REF" ] && [ -s "$CCD_FILE_REF" ]; then
     rm "$ccd_file"
   fi
 fi
+
