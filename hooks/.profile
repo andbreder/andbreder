@@ -1,39 +1,63 @@
 #!/bin/bash
 
 #region TERMINAL CUSTOM TEXT COLORS
-BLK_CLR='\e[0;30m' # black  / textcolor
-RED_CLR='\e[0;31m' # red    / textcolor
-GRN_CLR='\e[0;32m' # green  / textcolor
-YLW_CLR='\e[0;33m' # yellow / textcolor
-BLU_CLR='\e[0;34m' # blue   / textcolor
-PUR_CLR='\e[0;35m' # purple / textcolor
-CYN_CLR='\e[0;36m' # cyan   / textcolor
-WHT_CLR='\e[0;37m' # white  / textcolor
-BLK_BLD='\e[1;30m' # black  / textcolor + bold
-RED_BLD='\e[1;31m' # red    / textcolor + bold
-GRN_BLD='\e[1;32m' # green  / textcolor + bold
-YLW_BLD='\e[1;33m' # yellow / textcolor + bold
-BLU_BLD='\e[1;34m' # blue   / textcolor + bold
-PUR_BLD='\e[1;35m' # purple / textcolor + bold
-CYN_BLD='\e[1;36m' # cyan   / textcolor + bold
-WHT_BLD='\e[1;37m' # white  / textcolor + bold
-BLK_UND='\e[4;30m' # black  / textcolor + underline
-RED_UND='\e[4;31m' # red    / textcolor + underline
-GRN_UND='\e[4;32m' # green  / textcolor + underline
-YLW_UND='\e[4;33m' # yellow / textcolor + underline
-BLU_UND='\e[4;34m' # blue   / textcolor + underline
-PUR_UND='\e[4;35m' # purple / textcolor + underline
-CYN_UND='\e[4;36m' # cyan   / textcolor + underline
-WHT_UND='\e[4;37m' # white  / textcolor + underline
-BLK_BGC='\e[40m'   # black  / background
-RED_BGC='\e[41m'   # red    / background
-GRN_BGC='\e[42m'   # green  / background
-YLW_BGC='\e[43m'   # yellow / background
-BLU_BGC='\e[44m'   # blue   / background
-PUR_BGC='\e[45m'   # purple / background
-CYN_BGC='\e[46m'   # cyan   / background
-WHT_BGC='\e[47m'   # white  / background
-T_RESET='\e[0m'    # text reset
+
+BLK_CLR="\033[30m" # black
+RED_CLR="\033[31m" # red
+GRN_CLR="\033[32m" # green
+YLW_CLR="\033[33m" # yellow
+BLU_CLR="\033[34m" # blue
+PUR_CLR="\033[35m" # purple
+CYN_CLR="\033[36m" # cyan
+WHT_CLR="\033[37m" # white
+
+BLK_LCR="\033[90m" # light-black
+RED_LCR="\033[91m" # light-red
+GRN_LCR="\033[92m" # light-green
+YLW_LCR="\033[93m" # light-yellow
+BLU_LCR="\033[94m" # light-blue
+PUR_LCR="\033[95m" # light-purple
+CYN_LCR="\033[96m" # light-cyan
+WHT_LCR="\033[97m" # light-white
+
+BLK_BLD="\033[30;1m" # black  / textcolor + bold
+RED_BLD="\033[31;1m" # red    / textcolor + bold
+GRN_BLD="\033[32;1m" # green  / textcolor + bold
+YLW_BLD="\033[33;1m" # yellow / textcolor + bold
+BLU_BLD="\033[34;1m" # blue   / textcolor + bold
+PUR_BLD="\033[35;1m" # purple / textcolor + bold
+CYN_BLD="\033[36;1m" # cyan   / textcolor + bold
+WHT_BLD="\033[37;1m" # white  / textcolor + bold
+
+BLK_UND="\033[30;4m" # black  / textcolor + underline
+RED_UND="\033[31;4m" # red    / textcolor + underline
+GRN_UND="\033[32;4m" # green  / textcolor + underline
+YLW_UND="\033[33;4m" # yellow / textcolor + underline
+BLU_UND="\033[34;4m" # blue   / textcolor + underline
+PUR_UND="\033[35;4m" # purple / textcolor + underline
+CYN_UND="\033[36;4m" # cyan   / textcolor + underline
+WHT_UND="\033[37;4m" # white  / textcolor + underline
+
+BLK_BGC="\033[40m" # black  / background
+RED_BGC="\033[41m" # red    / background
+GRN_BGC="\033[42m" # green  / background
+YLW_BGC="\033[43m" # yellow / background
+BLU_BGC="\033[44m" # blue   / background
+PUR_BGC="\033[45m" # purple / background
+CYN_BGC="\033[46m" # cyan   / background
+WHT_BGC="\033[47m" # white  / background
+
+BLK_BGL="\033[100m" # black  / light-background
+RED_BGL="\033[101m" # red    / light-background
+GRN_BGL="\033[102m" # green  / light-background
+YLW_BGL="\033[103m" # yellow / light-background
+BLU_BGL="\033[104m" # blue   / light-background
+PUR_BGL="\033[105m" # purple / light-background
+CYN_BGL="\033[106m" # cyan   / light-background
+WHT_BGL="\033[107m" # white  / light-background
+
+T_RESET="\033[0m"   # text reset
+
 #endregion
 
 OS_PROFILE_LINUX="LINUX"
@@ -76,14 +100,14 @@ function get_git_ps1() {
   local git_main
   git_main=$(__git_ps1 "%s")
   if [ -n "$git_main" ]; then
-    echo "( $git_main "
+    echo "( $git_main"
   fi
 }
 function get_git_ps1_pths_pos() {
   local git_main
   git_main=$(__git_ps1 "%s")
   if [ -n "$git_main" ]; then
-    echo ")"
+    echo " )"
   fi
 }
 function get_git_ps1_changed() {
@@ -91,7 +115,7 @@ function get_git_ps1_changed() {
   git_main=$(__git_ps1 "%s")
   if [ -n "$git_main" ]; then
     if git status | grep -q "Changes to be committed"; then
-      echo "[+]"
+      echo " [+]"
     fi
   fi
 }
@@ -100,7 +124,7 @@ function get_git_ps1_not_staged() {
   git_main=$(__git_ps1 "%s")
   if [ -n "$git_main" ]; then
     if git status | grep -q "Changes not staged for commit" || git status | grep -q "Untracked files"; then
-      echo "[x]"
+      echo " [x]"
     fi
   fi
 }
@@ -125,14 +149,16 @@ function get_curr_folder() {
 # \s        | nome do shell atual           :  
 
 export PS1='\
-\n\
 \[\033]0;$TITLEPREFIX:$PWD\007\]\
-'$BLK_CLR'${LOCAL_IPV4} \
-'$BLU_CLR'\u \
-'$BLK_CLR'`get_curr_path`'$YLW_CLR'`get_curr_folder` \
-'$CYN_CLR'`get_git_ps1`'$GRN_CLR'`get_git_ps1_changed`'$RED_CLR'`get_git_ps1_not_staged`'$CYN_CLR'`get_git_ps1_pths_pos`\
+'${BLK_LCR}$LOCAL_IPV4' \
+'${BLU_CLR}'\u \
+'${BLK_LCR}'`get_curr_path`'${YLW_CLR}'`get_curr_folder` \
+'${CYN_CLR}'`get_git_ps1`\
+'${GRN_CLR}'`get_git_ps1_changed`\
+'${RED_CLR}'`get_git_ps1_not_staged`\
+'${CYN_CLR}'`get_git_ps1_pths_pos`\
 \n\
-'$BLK_CLR'$ '$T_RESET
+'${BLK_LCR}'$ '$T_RESET
 #endregion
 
 #region GIT ALIAS
@@ -190,13 +216,31 @@ function gurl() {
 
 #endregion
 
+#region UUIDGEN
+
+HARD_DISK_LETTER=$(mount | head -n 1 | awk -F ':' '{print $1}')
+WINDOWS_MAJOR_VERSION=$(wmic os get Version | sed -n '2p' | cut -d '.' -f 1)
+SYSTEM_ARCHITECTURE=$(wmic os get OSArchitecture | sed -n '2p' | cut -d '-' -f 1)
+UUIDGEN_PATH=$(find "$HARD_DISK_LETTER:\\Program Files (x86)\\Windows Kits\\$WINDOWS_MAJOR_VERSION\\bin" -name uuidgen* | tac | grep "x$SYSTEM_ARCHITECTURE" | head -1)
+
+function guid() {
+  if [ -e "$UUIDGEN_PATH" ]; then
+    echo -e "${RED_CLR}not found!$T_RESET \"$UUIDGEN_PATH\""
+    echo -e "${PUR_CLR}uuidgen$T_RESET $("$UUIDGEN_PATH")"
+  else
+    echo -e "${RED_CLR}not found!$T_RESET \"$UUIDGEN_PATH\""
+  fi
+}
+
+#endregion
+
 function profile() {
   if [ "$#" -eq 0 ]; then
     profile --help
   else
     case "$1" in
       -c|--code)
-        echo -e "$PUR_CLR$ profile --code$T_RESET ~/.profile"
+        echo -e "${PUR_UND}profile${T_RESET} ${PUR_CLR}--code${T_RESET} ~/.profile"
         code ~/.profile
         ;;
       -s|--save)
@@ -208,14 +252,15 @@ function profile() {
         if [ -d "$2" ]; then
           output="$2/.profile"
         fi
-        echo -e "$PUR_CLR$ profile --save$T_RESET ~/.profile $output"
+        echo -e "${PUR_UND}profile${T_RESET} ${PUR_CLR}--save${T_RESET} ~/.profile $output"
         cp ~/.profile "$output"
         ;;
       -h|--help|*)
-        echo -e "profile usage:\n"
+        echo -e "${PUR_UND}profile${T_RESET} usage:\n"
         echo -e "  ${BLU_CLR}--code${T_RESET} | -c          opens the current .profile file for editing"
         echo -e "  ${BLU_CLR}--help${T_RESET} | -h          displays command execution options"
         echo -e "  ${BLU_CLR}--save${T_RESET} | -s <path>   updates the .profile file in the ~/ directory"
+        echo ""
         ;;
     esac
   fi
@@ -227,8 +272,6 @@ function profile() {
 
 # apagar o historico do terminal anterior e a mensagem chata "History restored"
 clear
-
-WORKSPACE_DIR=`pwd`
 
 CCD_FILE_REF=~/.ccd
 function ccd() {
@@ -243,10 +286,10 @@ function ccd() {
 if [ -f "$CCD_FILE_REF" ] && [ -s "$CCD_FILE_REF" ]; then
   ccd_first_line=$(head -n 1 "$CCD_FILE_REF")
   if [ -d "$ccd_first_line" ]; then
-    echo -e "$BLK_CLR# ${PUR_UND}ccd$BLK_CLR [$CCD_FILE_REF]${GRN_CLR} restored, moving to$T_RESET"
+    echo -e "${BLK_LCR}# ${PUR_UND}ccd${T_RESET}${BLK_LCR} [$CCD_FILE_REF]${GRN_CLR} restored, moving to${T_RESET}"
     cd "$ccd_first_line"
   else
-    echo -e "$BLK_CLR# ${PUR_UND}ccd$BLK_CLR [$CCD_FILE_REF]${RED_CLR} recorded directory ${RED_UND}not found$T_RESET"
+    echo -e "${BLK_LCR}# ${PUR_UND}ccd${T_RESET}${BLK_LCR} [$CCD_FILE_REF]${RED_CLR} recorded directory ${RED_UND}not found${T_RESET}"
     rm "$ccd_file"
   fi
 fi
