@@ -298,10 +298,11 @@ clear
 
 CCD_FILE_REF=~/.ccd
 function ccd() {
-  if [ ! -d "$1" ]; then
-    echo -e "${RED_CLR}not found!$T_RESET $1"
+  cd_path="${1:-$(head -n 1 "$CCD_FILE_REF")}"
+  if [ ! -d "$cd_path" ]; then
+    echo -e "${RED_CLR}not found!$T_RESET ${cd_path@Q}"
   else
-    cd $1
+    cd "$cd_path"
     pwd > "$CCD_FILE_REF"
   fi
 }
