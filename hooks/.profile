@@ -209,9 +209,9 @@ function gfast() {
   gpush
 }
 function gurl() {
-  echo -e "$PUR_CLR$ git config --get remote.origin.url$T_RESET"
+  echo -e "$PUR_CLR$ ${PUR_UND}git config${T_RESET}$BLK_LCR --get remote.origin.url$T_RESET"
   GIT_URL=$(git config --get remote.origin.url)
-  echo -e "\n\t${GIT_URL%.git}"
+  echo -e "\t${GIT_URL%.git}\n"
 }
 
 #endregion
@@ -224,10 +224,33 @@ SYSTEM_ARCHITECTURE=$(wmic os get OSArchitecture | sed -n '2p' | cut -d '-' -f 1
 UUIDGEN_PATH=$(find "$HARD_DISK_LETTER:\\Program Files (x86)\\Windows Kits\\$WINDOWS_MAJOR_VERSION\\bin" -name uuidgen* | tac | grep "x$SYSTEM_ARCHITECTURE" | head -1)
 
 function guid() {
+  # <!> "printf" porque vai acontecer um "10\bin" e isso (0\b) quebra o terminal usando "echo -e ..."
   if [ -e "$UUIDGEN_PATH" ]; then
-    echo -e "${PUR_UND}uuidgen$T_RESET $("$UUIDGEN_PATH")"
+    if [ $# -gt 2 ]; then
+      guid --help
+    else
+      args="$*"
+      if [[ "${args:0:1}" != "-" || "$args" == *"-h"* ]]; then
+        echo -e "${PUR_UND}guid${T_RESET} usage:\n"
+        echo -e "  ${BLU_CLR}--help${T_RESET}   | -h    displays command execution options"
+        echo -e "  ${BLU_CLR}--nodash${T_RESET} | -n    outputs a GUID without dashes/hyphens"
+        echo -e "  ${BLU_CLR}--upper${T_RESET}  | -u    outputs a GUID with all characters in uppercase"
+        echo ""
+      else
+        guid=$("$UUIDGEN_PATH")
+        # imprimir o GUID sem hifen
+        if [[ "$args" == *"n"* ]]; then
+          guid="${guid//-/}"
+        fi
+        # imprimir o GUID em letras maiusculas
+        if [[ "$args" == *"u"* ]]; then
+          guid=$(echo "$guid" | tr '[:lower:]' '[:upper:]')
+        fi
+        printf "$PUR_CLR$ ${PUR_UND}uuidgen${T_RESET}$BLK_LCR %s${T_RESET}\n" "${UUIDGEN_PATH@Q}"
+        echo -e "\n\t$guid\n"
+      fi
+    fi
   else
-    # <!> "printf" porque vai acontecer um "10\bin" e isso (0\b) quebra o terminal usando "echo -e ..."
     printf "${RED_CLR}not found!$T_RESET %s\n" "${UUIDGEN_PATH@Q}"
   fi
 }
@@ -293,4 +316,3 @@ if [ -f "$CCD_FILE_REF" ] && [ -s "$CCD_FILE_REF" ]; then
     rm "$ccd_file"
   fi
 fi
-
