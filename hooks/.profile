@@ -81,20 +81,25 @@ esac
 
 LOCAL_IPV4=""
 case $OS_PROFILE_CURRENT in
-*$OS_PROFILE_LINUX*) ipv4='hostname -I';;
+*$OS_PROFILE_LINUX*)
+  # no linux, 'hostname -I' retorna uma lista de ips separando com espacos
+  # estou assumindo que o "ip certo" sera sempre o primeiro
+  LOCAL_IPV4=`hostname -I | cut -d ' ' -f1`
+  ;;
 *$OS_PROFILE_WINDOWS*)
   # no windows, ipconfig retorna "um binario", da problema pra interpretar como texto etc...
   # pra contornar esse texto maluco, use o paremetro --text
   # o cut vai tbm ajudar a limpar o texto por conta o "ce-cedilha"
   #  1234567890123
   # "   Endere□o IPv4. . . . . . . .  . . . . . . . : 192.168.0.1"
-  LOCAL_IPV4=`ipconfig | egrep --ignore-case --text 'ipv4.*\. \.' | cut -c 13- | sed 's/.*\:\s//' | awk -F. '{printf "%03d.%03d.%03d.%03d\n", $1, $2, $3, $4}'`
+  LOCAL_IPV4=`ipconfig | egrep --ignore-case --text 'ipv4.*\. \.' | cut -c 13- | sed 's/.*\:\s//'`
   ;;
 *)
   echo "que sistema é esse tio? [${OSTYPE:-$(uname)}]"
   exit 1
   ;;
 esac
+LOCAL_IPV4=`echo "$LOCAL_IPV4" | awk -F. '{printf "%03d.%03d.%03d.%03d\n", $1, $2, $3, $4}'`
 
 function get_git_ps1() {
   local git_main
