@@ -63,110 +63,8 @@ T_RESET="\033[0m"   # text reset
 OS_PROFILE_LINUX="LINUX"
 OS_PROFILE_WINDOWS="WIN"
 
-#region TERMINAL PS1
-# REF: 9822079d14474a9a87acee47231d0c4a >>>
-# ? define a variavel OSPROFILEKEY a partir do sistema operacional reconhecido
-OS_PROFILE_CURRENT="unknow"
-# $OSTYPE < geralmente não encontrada em so linux
-# se $OSTYPE, padrao, nao preenchida, retorna e utiliza o valor de uname
-case "${OSTYPE:-$(uname)}" in
-  *nix*|*nux*) OS_PROFILE_CURRENT=$OS_PROFILE_LINUX;;
-  *msys*|*GW*) OS_PROFILE_CURRENT=$OS_PROFILE_WINDOWS;;
-  *)
-    echo "que sistema é esse tio? [${OSTYPE:-$(uname)}]"
-    exit 1
-    ;;
-esac
-# REF: 9822079d14474a9a87acee47231d0c4a <<<
-
-LOCAL_IPV4=""
-case $OS_PROFILE_CURRENT in
-*$OS_PROFILE_LINUX*)
-  # no linux, 'hostname -I' retorna uma lista de ips separando com espacos
-  # estou assumindo que o "ip certo" sera sempre o primeiro
-  LOCAL_IPV4=`hostname -I | cut -d ' ' -f1`
-  ;;
-*$OS_PROFILE_WINDOWS*)
-  # no windows, ipconfig retorna "um binario", da problema pra interpretar como texto etc...
-  # pra contornar esse texto maluco, use o paremetro --text
-  # o cut vai tbm ajudar a limpar o texto por conta o "ce-cedilha"
-  #  1234567890123
-  # "   Endere□o IPv4. . . . . . . .  . . . . . . . : 192.168.0.1"
-  LOCAL_IPV4=`ipconfig | egrep --ignore-case --text 'ipv4.*\. \.' | cut -c 13- | sed 's/.*\:\s//'`
-  ;;
-*)
-  echo "que sistema é esse tio? [${OSTYPE:-$(uname)}]"
-  exit 1
-  ;;
-esac
-LOCAL_IPV4=`echo "$LOCAL_IPV4" | awk -F. '{printf "%03d.%03d.%03d.%03d\n", $1, $2, $3, $4}'`
-
-function get_git_ps1() {
-  local git_main
-  git_main=$(__git_ps1 "%s")
-  if [ -n "$git_main" ]; then
-    echo "( $git_main"
-  fi
-}
-function get_git_ps1_pths_pos() {
-  local git_main
-  git_main=$(__git_ps1 "%s")
-  if [ -n "$git_main" ]; then
-    echo " )"
-  fi
-}
-function get_git_ps1_changed() {
-  local git_main
-  git_main=$(__git_ps1 "%s")
-  if [ -n "$git_main" ]; then
-    if git status | grep -q "Changes to be committed"; then
-      echo " [+]"
-    fi
-  fi
-}
-function get_git_ps1_not_staged() {
-  local git_main
-  git_main=$(__git_ps1 "%s")
-  if [ -n "$git_main" ]; then
-    if git status | grep -q "Changes not staged for commit" || git status | grep -q "Untracked files"; then
-      echo " [x]"
-    fi
-  fi
-}
-
-function get_curr_path() {
-  dirname=`pwd`
-  echo ${dirname%/*}
-}
-function get_curr_folder() {
-  dirname=`pwd`
-  echo /${dirname##*/}
-}
-
-# item
-# ========================================================
-# \[\033]0; | prefixo do titulo do terminal :
-# \u        | nome do usuário               : = whoami
-# \h        | nome da máquina               : = hostname
-# \w        | diretorio completo            : = pwd
-# \W        | diretorio atual               : apenas a pasta
-# \n        | nova linha                    : 
-# \s        | nome do shell atual           :  
-
-export PS1='\
-\[\033]0;$TITLEPREFIX:$PWD\007\]\
-'${BLK_LCR}$LOCAL_IPV4' \
-'${BLU_CLR}'\u \
-'${BLK_LCR}'`get_curr_path`'${YLW_CLR}'`get_curr_folder` \
-'${CYN_CLR}'`get_git_ps1`\
-'${GRN_CLR}'`get_git_ps1_changed`\
-'${RED_CLR}'`get_git_ps1_not_staged`\
-'${CYN_CLR}'`get_git_ps1_pths_pos`\
-\n\
-'${BLK_LCR}'$ '$T_RESET
-#endregion
-
 #region GIT ALIAS
+
 alias         gadd='git_alias "add"'         # add
 alias      gbranch='git_alias "branch"'      # branch
 alias           gb='git_alias "branch"'      # 
@@ -221,25 +119,35 @@ function gurl() {
 
 #endregion
 
+#region LIST ALIAS
+
+alias las='ls_alias "-la"'
+
+function ls_alias() {
+  echo -e "$PUR_CLR\$ ls $1$T_RESET"
+  ls "$@"
+}
+
+#endregion
+
 #region UUIDGEN
 
 HARD_DISK_LETTER=$(mount | head -n 1 | awk -F ':' '{print $1}')
 WINDOWS_MAJOR_VERSION=$(wmic os get Version | sed -n '2p' | cut -d '.' -f 1)
-SYSTEM_ARCHITECTURE=$(wmic os get OSArchitecture | sed -n '2p' | cut -d '-' -f 1)
-UUIDGEN_PATH=$(find "$HARD_DISK_LETTER:\\Program Files (x86)\\Windows Kits\\$WINDOWS_MAJOR_VERSION\\bin" -name uuidgen* | tac | grep "x$SYSTEM_ARCHITECTURE" | head -1)
+SYSTEM_ARCHITECTURE=$(wmic os get OSArchitecture | sed -n '2s/[^0-9]*\([0-9]\+\).*/x\1/p')
+UUIDGEN_PATH=$(find "/$HARD_DISK_LETTER/Program Files (x86)/Windows Kits/$WINDOWS_MAJOR_VERSION/bin" -name uuidgen* | tac | grep $SYSTEM_ARCHITECTURE | head -1)
 
 function guid() {
-  # <!> "printf" porque vai acontecer um "10\bin" e isso (0\b) quebra o terminal usando "echo -e ..."
   if [ -e "$UUIDGEN_PATH" ]; then
     if [ $# -gt 2 ]; then
       guid --help
     else
       args="$*"
       if [[ "${args:0:1}" != "-" || "$args" == *"-h"* ]]; then
-        echo -e "${PUR_UND}guid${T_RESET} usage:\n"
-        echo -e "  ${BLU_CLR}--help${T_RESET}   | -h    displays command execution options"
-        echo -e "  ${BLU_CLR}--nodash${T_RESET} | -n    outputs a GUID without dashes/hyphens"
-        echo -e "  ${BLU_CLR}--upper${T_RESET}  | -u    outputs a GUID with all characters in uppercase"
+        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen ${T_RESET}usage:\n"
+        echo -e "  ${BLU_CLR}--help   ${T_RESET}| -h    displays command execution options"
+        echo -e "  ${BLU_CLR}--nodash ${T_RESET}| -n    outputs a GUID without dashes/hyphens"
+        echo -e "  ${BLU_CLR}--upper  ${T_RESET}| -u    outputs a GUID with all characters in uppercase"
         echo ""
       else
         guid=$("$UUIDGEN_PATH")
@@ -251,12 +159,12 @@ function guid() {
         if [[ "$args" == *"u"* ]]; then
           guid=$(echo "$guid" | tr '[:lower:]' '[:upper:]')
         fi
-        printf "$PUR_CLR$ ${PUR_UND}uuidgen${T_RESET}$BLK_LCR %s${T_RESET}\n" "${UUIDGEN_PATH@Q}"
+        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen${T_RESET}$BLK_LCR ${UUIDGEN_PATH@Q}${T_RESET}"
         echo -e "\n\t$guid\n"
       fi
     fi
   else
-    printf "${RED_CLR}not found!$T_RESET %s\n" "${UUIDGEN_PATH@Q}"
+    echo -e "$RED_CLR$ uuidgen ${RED_UND}not found$T_RESET$RED_CLR in '/$HARD_DISK_LETTER/Program Files (x86)/Windows Kits/$WINDOWS_MAJOR_VERSION/bin'$T_RESET"
   fi
 }
 
@@ -322,3 +230,78 @@ if [ -f "$CCD_FILE_REF" ] && [ -s "$CCD_FILE_REF" ]; then
     rm "$ccd_file"
   fi
 fi
+
+function pwdw() {
+  crrdr=$(pwd | sed 's|^/||' | sed 's|/|\\|g')
+  echo "$(tr '[:lower:]' '[:upper:]' <<<"${crrdr:0:1}"):${crrdr:1}"
+}
+
+#region TERMINAL PS1
+
+# REF: 9822079d14474a9a87acee47231d0c4a >>>
+# ? define a variavel OSPROFILEKEY a partir do sistema operacional reconhecido
+OS_PROFILE_CURRENT="unknow"
+# $OSTYPE < geralmente nao encontrada em so linux
+# se $OSTYPE, padrao, nao preenchida, retorna e utiliza o valor de uname
+case "${OSTYPE:-$(uname)}" in
+  *nix*|*nux*) OS_PROFILE_CURRENT=$OS_PROFILE_LINUX;;
+  *msys*|*GW*) OS_PROFILE_CURRENT=$OS_PROFILE_WINDOWS;;
+  *)
+    echo "que sistema e' esse tio? [${OSTYPE:-$(uname)}]"
+    exit 1
+    ;;
+esac
+# REF: 9822079d14474a9a87acee47231d0c4a <<<
+
+LOCAL_IPV4=""
+case $OS_PROFILE_CURRENT in
+*$OS_PROFILE_LINUX*)
+  # no linux, 'hostname -I' retorna uma lista de ips separando com espacos
+  # estou assumindo que o "ip certo" sera sempre o primeiro
+  LOCAL_IPV4=`hostname -I | cut -d ' ' -f1`
+  ;;
+*$OS_PROFILE_WINDOWS*)
+  # no windows, ipconfig retorna "um binario", da problema pra interpretar como texto etc...
+  # pra contornar esse texto maluco, use o paremetro --text
+  # o cut vai tbm ajudar a limpar o texto por conta o "ce-cedilha"
+  #  1234567890123
+  # "   Endereco IPv4. . . . . . . .  . . . . . . . : 192.168.0.1"
+  LOCAL_IPV4=`ipconfig | egrep --ignore-case --text 'ipv4.*\. \.' | cut -c 13- | sed 's/.*\:\s//'`
+  ;;
+*)
+  echo "que sistema e' esse tio? [${OSTYPE:-$(uname)}]"
+  exit 1
+  ;;
+esac
+LOCAL_IPV4=`echo "$LOCAL_IPV4" | awk -F. '{printf "%03d.%03d.%03d.%03d\n", $1, $2, $3, $4}'`
+
+function ps1_git_status() {
+  git_main=`__git_ps1 "%s"`
+  if [ -n "$git_main" ]; then
+    echo -en "$CYN_BLD( $git_main" # abre a area com o nome da branch do diretorio atual
+    gtt_stt=$(git status)
+    if echo "$gtt_stt" | grep -q -e "Changes" -e "Untracked"; then
+      if echo "$gtt_stt" | grep -q "Changes to be committed"; then
+        echo -en "$GRN_BLD [+]" # simbolo verde diferente
+      fi
+      if echo "$gtt_stt" | grep -q "Changes not staged for commit" || echo "$gtt_stt" | grep -q "Untracked files"; then
+        echo -en "$RED_BLD [x]" # simbolo vermelho diferente
+      fi
+    fi
+    echo -en "$CYN_BLD )" # fecha a area aberta
+  fi
+}
+
+# $LOCAL_IPV4     = IPv4 formatado {3}.{3}.{3}.{3} << se mudar depois de abrir o terminal, abra outro!
+# \u              = nome do usuario
+# ${PWD%/*}       = diretorio atual, mas  FORA  a ultima pasta (corta tudo DEPOIS da ultima '/')
+# ${PWD##*/}      = diretorio atual, mas APENAS a ultima pasta (corta tudo ANTES  da ultima '/')
+
+#[c] = non printable/colors
+PS1=$BLK_CLR'$ $LOCAL_IPV4 '$BLU_CLR'\u '$BLK_CLR'${PWD%/*}'$YLW_LCR'/${PWD##*/} `ps1_git_status`\n'$BLK_CLR'\$ '$T_RESET
+#[c]a......a                b......b     c......c           d......d              x.x.x....x.x.x    e......e     f......f
+
+#endregion
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
