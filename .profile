@@ -122,7 +122,6 @@ function gurl() {
 #region LIST ALIAS
 
 alias las='ls_alias "-la"'
-alias lsa='ls_alias "-la"'
 
 function ls_alias() {
   echo -e "$PUR_CLR\$ ls $1$T_RESET"
@@ -145,7 +144,7 @@ function guid() {
     else
       args="$*"
       if [[ "${args:0:1}" != "-" || "$args" == *"-h"* ]]; then
-        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen$T_RESET usage:\n"
+        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen ${T_RESET}usage:\n"
         echo -e "  ${BLU_CLR}--help   ${T_RESET}| -h    displays command execution options"
         echo -e "  ${BLU_CLR}--nodash ${T_RESET}| -n    outputs a GUID without dashes/hyphens"
         echo -e "  ${BLU_CLR}--upper  ${T_RESET}| -u    outputs a GUID with all characters in uppercase"
@@ -160,7 +159,7 @@ function guid() {
         if [[ "$args" == *"u"* ]]; then
           guid=$(echo "$guid" | tr '[:lower:]' '[:upper:]')
         fi
-        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen$BLK_LCR ${UUIDGEN_PATH@Q}$T_RESET"
+        echo -e "$PUR_CLR$ ${PUR_UND}uuidgen${T_RESET}$BLK_LCR ${UUIDGEN_PATH@Q}${T_RESET}"
         echo -e "\n\t$guid\n"
       fi
     fi
@@ -177,7 +176,7 @@ function profile() {
   else
     case "$1" in
       -c|--code)
-        echo -e "$PUR_CLR$ ${PUR_UND}profile$T_RESET ${PUR_CLR}code$T_RESET ~/.profile"
+        echo -e "${PUR_UND}profile${T_RESET} ${PUR_CLR}--code${T_RESET} ~/.profile"
         code ~/.profile
         ;;
       -s|--save)
@@ -189,14 +188,14 @@ function profile() {
         if [ -d "$2" ]; then
           output="$2/.profile"
         fi
-        echo -e "$PUR_CLR$ ${PUR_UND}profile$T_RESET ${PUR_CLR}save$T_RESET ~/.profile $output"
+        echo -e "${PUR_UND}profile${T_RESET} ${PUR_CLR}--save${T_RESET} ~/.profile $output"
         cp ~/.profile "$output"
         ;;
       -h|--help|*)
-        echo -e "$PUR_CLR$ ${PUR_UND}profile$T_RESET usage:\n"
-        echo -e "  ${BLU_CLR}--code$T_RESET | -c          opens the current .profile file for editing"
-        echo -e "  ${BLU_CLR}--help$T_RESET | -h          displays command execution options"
-        echo -e "  ${BLU_CLR}--save$T_RESET | -s <path>   updates ~/.profile from the received <path>"
+        echo -e "${PUR_UND}profile${T_RESET} usage:\n"
+        echo -e "  ${BLU_CLR}--code${T_RESET} | -c          opens the current .profile file for editing"
+        echo -e "  ${BLU_CLR}--help${T_RESET} | -h          displays command execution options"
+        echo -e "  ${BLU_CLR}--save${T_RESET} | -s <path>   updates the .profile file in the ~/ directory"
         echo ""
         ;;
     esac
